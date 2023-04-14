@@ -1,0 +1,155 @@
+@charset "UTF-8";
+body {
+	text-align: center;
+}
+
+.card {
+	display: flex;
+	display: inline-block;
+	transition: 0.3s;
+	width: 60%;
+	margin: 10px;
+}
+
+.card:hover {
+	box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+}
+
+.title {
+	text-align: left;
+	padding: 2px 16px;
+	font-size: 24px;
+}
+
+.container {
+	text-align: left;
+	padding: 2px 16px;
+	column-count: 2;
+}
+
+.text-container {
+	display: inline-block;
+	vertical-align: top;
+}
+
+.column {
+	float: left;
+	width: 50%;
+}
+
+nav {
+	flex-wrap: wrap;
+	background-color: white;
+	flex-direction: column;
+	overflow: hidden;
+	align-items: center;
+	display: flex;
+	justify-content: space-between;
+	margin: 0 auto;
+	width: 60%;
+	height: 100px;
+}
+
+nav div {
+	display: flex;
+	justify-content: space-between;
+	width: 100%;
+}
+
+nav div:nth-child(2) {
+	justify-content: center;
+}
+
+nav a {
+	float: left;
+	display: block;
+	color: #666;
+	text-align: center;
+	padding: 14px 16px;
+	text-decoration: none;
+}
+
+nav a:hover {
+	background-color:gray;
+}
+
+nav input[type=text] {
+	padding: 6px;
+	border: none;
+	background-color: gray;
+	border-radius: 4px;
+}
+
+nav form {
+	margin-left: 20px;
+}
+
+nav img {
+	margin-left: 20px;
+	margin-right: 40%;
+}
+
+nav span {
+	margin-right: 20px;
+	margin-left: 40%;
+}
+
+.tab-navigation {
+	background-color: #f2f2f2;
+	border-top: 1px solid #ccc;
+	display: flex;
+	justify-content: center;
+	margin-top: 20px;
+}
+
+.tab-navigation ul {
+	display: flex;
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.tab-navigation a {
+	color: #666;
+	display: block;
+	font-size: 18px;
+	padding: 10px 20px;
+	text-decoration: none;
+}
+
+.tab-navigation a:hover {
+	background-color: #ddd;
+	color: #000;
+}
+
+.tab-content {
+   display: none;
+}
+
+.active-tab {
+	display: block;
+}
+
+@media ( prefers-color-scheme : dark) {
+	body {
+		background-color: #222;
+		color: white;
+	}
+	nav {
+		background-color: #222;
+	}
+	nav a {
+		color: white;
+	}
+	nav input[type=text] {
+		background-color: #333;
+		color: white;
+	}
+	.tab-navigation {
+		border-top: #222;
+		background-color: #222;
+	}
+	.tab-navigation a {
+		color: white;
+	}
+}

@@ -1,7 +1,11 @@
 <%@page contentType="text/html; charset=UTF-8"%>
+<%@page import="test.db" %>
 <%@page import="test.Save" %>
 
 <%
-	Save saver = new Save();
-	saver.insertMovie();
+	db test = new db();
+	for(int i=1; i<6; i++){
+		out.println(test.load(i));
+	}
+	
 %>

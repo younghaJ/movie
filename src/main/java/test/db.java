@@ -17,30 +17,28 @@ public class db {
 	public static final String SAVEFOLDER = "C:/Jsp/movie/src/main/webapp/poster/";
 	public static final String ENCODING = "UTF-8";
 	public static final int MAXSIZE = 1024*1024*20;
-	private static DBConnectionMgr pool;
+	private DBConnectionMgr pool;
 	
 	public db() {
 		pool = DBConnectionMgr.getInstance();
 	}
 	
-    public static void main(String[] args) {
-        load();
+    public void main(String[] args) {
+        //load();
     }
     
-    public static void load() {
+    public String load(int page) {
     	Connection con = null;
 		PreparedStatement pstmt = null;
 		String sql = null;
 		
+		String endpoint = "https://api.themoviedb.org/3/discover/movie?"
+        		+ "api_key=e9f48626c4f86f70cc4a49e2602b639c&language=ko&region=KR"
+        		+ "&sort_by=popularity.desc&include_adult=false&include_video=false&page=" + page
+        		+ "&year=2022&with_watch_monetization_types=flatrate";
+		
     	try {
-            // TMDb API 엔드포인트 URL
-            String endpoint = "https://api.themoviedb.org/3/discover/movie?"
-            		+ "api_key=e9f48626c4f86f70cc4a49e2602b639c&language=ko&region=KR"
-            		+ "&sort_by=popularity.desc&include_adult=false&include_video=false&page=1&year=2022&with_watch_monetization_types=flatrate";
-            // TMDb API에서 발급받은 API 키를 입력합니다.
-            //String apiKey = "e9f48626c4f86f70cc4a49e2602b639c";
-            // URL 생성
-            //URL url = new URL(endpoint.replace("YOUR_API_KEY", apiKey));
+            
             URL url = new URL(endpoint);
             // HTTP 연결 생성
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -86,6 +84,7 @@ public class db {
         } finally {
 			pool.freeConnection(con, pstmt);
 		}
+		return endpoint;
     }
     public static void saveImage(String posterPath) {
         try {
