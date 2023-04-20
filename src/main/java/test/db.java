@@ -78,6 +78,8 @@ public class db {
                 }
                 String movieCd = koMoviekey(title);
                 
+                int movieid = movie.getInt("id");
+                
                 MovieBean bean = searchetc(movieCd);
                 String playtime = bean.getPlaytime();
                 String director = bean.getDirector();
@@ -92,11 +94,13 @@ public class db {
                 System.out.println("movieCd=" + movieCd);
                 System.out.println("Director : " + director);
                 System.out.println("배우들 : " + actors);
+                System.out.println("청불(T가 성인) : " + bean.getAge());
+                System.out.println("tmdb키 : " + movieid);
                 System.out.println("---------------------------");
                 // 이미지 파일 저장
                 con = pool.getConnection();
     			sql = "INSERT movie(TITLE, CONTENT, POSTER, GENRE, DIRECTOR, ACTOR, PLAYTIME, AGE, TRAILER, WATCHOTT, MAKER)"
-                + "VALUES(?,?,?,?,?,?,?,'a','a','a','a')";
+                + "VALUES(?,?,?,?,?,?,?,?,?,'a',?)";
                 
     			pstmt = con.prepareStatement(sql);
     			pstmt.setString(1, title);
@@ -106,6 +110,9 @@ public class db {
     			pstmt.setString(5, director);
     			pstmt.setString(6, actors);
     			pstmt.setString(7, playtime);
+    			pstmt.setString(8, bean.getAge());
+    			pstmt.setString(9, video(movieid));
+    			pstmt.setString(10, production(movieid));
     			pstmt.executeUpdate();
     			
                 //saveImage(posterPath);
@@ -158,6 +165,76 @@ public class db {
     	return genre;
     }
     
+    public String video(int movieid) {
+    	String videokey = "";
+    	String uri = "https://api.themoviedb.org/3/movie/" + movieid + "/videos?api_key=e9f48626c4f86f70cc4a49e2602b639c&language=ko";
+    	URL url;
+    	
+		try {
+			url = new URL(uri);
+			
+	        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+	        conn.setRequestMethod("GET");
+	        
+	        BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+	        StringBuilder sb = new StringBuilder();
+	        String line;
+	        
+	        while ((line = rd.readLine()) != null) {
+	            sb.append(line);
+	        }
+	        rd.close();
+	        
+	        JSONObject json = new JSONObject(sb.toString());
+	        JSONArray results = json.getJSONArray("results");
+	        for (int i = 0; i < results.length(); i++) {
+	            if (i > 0) {
+	            	videokey += ",";
+	            }
+	            videokey += results.getJSONObject(i).getString("key");
+	        }
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+    	return videokey;
+    }
+    
+    // 영화 제작사
+    public String production(int movieid) {
+    	String movieproduction = "";
+    	String uri = "https://api.themoviedb.org/3/movie/" + movieid + "?api_key=e9f48626c4f86f70cc4a49e2602b639c&language=ko";
+    	URL url;
+    	
+		try {
+			url = new URL(uri);
+			
+	        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+	        conn.setRequestMethod("GET");
+	        
+	        BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+	        StringBuilder sb = new StringBuilder();
+	        String line;
+	        
+	        while ((line = rd.readLine()) != null) {
+	            sb.append(line);
+	        }
+	        rd.close();
+	        
+	        JSONObject json = new JSONObject(sb.toString());
+	        JSONArray results = json.getJSONArray("production_companies");
+	        for (int i = 0; i < results.length(); i++) {
+	            if (i > 0) {
+	            	movieproduction += ",";
+	            }
+	            movieproduction += results.getJSONObject(i).getString("name");
+	        }
+	        
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+    	return movieproduction;
+    }
+    
     // TMDB에서 영화 이름을 받아 영화진흥위원회 movieCd를 찾는다
     public String koMoviekey(String title) {
     	String movieCd = "";
@@ -183,7 +260,21 @@ public class db {
 	        JSONObject json = new JSONObject(sb.toString());
 	        JSONObject movieListResult = json.getJSONObject("movieListResult");
 	        JSONArray movieList = movieListResult.getJSONArray("movieList");
-	        movieCd = movieList.getJSONObject(0).getString("movieCd");
+	        for (int i = 0; i < movieList.length(); i++) {
+	        	// 이름이 정확히 일치하면 그 배열을 들고 오고 for문 탈출
+				if(title.equals(movieList.getJSONObject(i).getString("movieNm"))) {
+					System.out.println("타이틀 : " + title);
+					System.out.println("불러온 제목 : " + movieList.getJSONObject(i).getString("movieNm"));
+					movieCd = movieList.getJSONObject(i).getString("movieCd");
+					break;
+				}
+			}
+	        // 없으면 그냥 첫번째 값 들고옴
+	        if(movieCd=="") {
+	        	movieCd = movieList.getJSONObject(0).getString("movieCd");
+	        }
+	        // 그것도 없으면 나도 몰라
+	       
 	        
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -192,7 +283,7 @@ public class db {
     	return movieCd;
     }
     
-    // 영화 감독, 배우 등 기타 정보
+    // 영화 감독, 배우, 성인 영화 여부 등 기타 정보
     // 영화진흥위원회
     public MovieBean searchetc(String movieCd) {
     	MovieBean bean = new MovieBean();
@@ -238,6 +329,17 @@ public class db {
 	            actor_str += actors.getJSONObject(i).getString("peopleNm");
 	        }
 	        bean.setActor(actor_str);
+	        
+	        JSONArray ageJson = movieInfo.getJSONArray("audits");
+	        String ageStr = ageJson.getJSONObject(0).getString("watchGradeNm");
+	        String age = "";
+	        if(ageStr.contains("불가"))
+	        	age = "T";
+	        else if(ageStr.equals(""))
+	        	age = "-";
+	        else
+	        	age = "F";
+	        bean.setAge(age);
 	        
 		} catch (Exception e) {
 			e.printStackTrace();
