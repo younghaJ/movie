@@ -36,7 +36,7 @@ public class db {
 		String endpoint = "https://api.themoviedb.org/3/discover/movie?"
         		+ "api_key=e9f48626c4f86f70cc4a49e2602b639c&language=ko&region=KR"
         		+ "&sort_by=popularity.desc&include_adult=false&include_video=false&page=" + page
-        		+ "&year=2022&with_watch_monetization_types=flatrate";
+        		+ "&year=2020&with_watch_monetization_types=flatrate";
 		
     	try {
             
@@ -100,7 +100,7 @@ public class db {
                 // 이미지 파일 저장
                 con = pool.getConnection();
     			sql = "INSERT movie(TITLE, CONTENT, POSTER, GENRE, DIRECTOR, ACTOR, PLAYTIME, AGE, TRAILER, WATCHOTT, MAKER)"
-                + "VALUES(?,?,?,?,?,?,?,?,?,'a',?)";
+                + "VALUES(?,?,?,?,?,?,?,?,?,?,?)";
                 
     			pstmt = con.prepareStatement(sql);
     			pstmt.setString(1, title);
@@ -112,7 +112,8 @@ public class db {
     			pstmt.setString(7, playtime);
     			pstmt.setString(8, bean.getAge());
     			pstmt.setString(9, video(movieid));
-    			pstmt.setString(10, production(movieid));
+    			pstmt.setString(10, provider(movieid));
+    			pstmt.setString(11, production(movieid));
     			pstmt.executeUpdate();
     			
                 //saveImage(posterPath);
@@ -165,6 +166,7 @@ public class db {
     	return genre;
     }
     
+    // 영화 예고편 tmdb
     public String video(int movieid) {
     	String videokey = "";
     	String uri = "https://api.themoviedb.org/3/movie/" + movieid + "/videos?api_key=e9f48626c4f86f70cc4a49e2602b639c&language=ko";
@@ -233,6 +235,44 @@ public class db {
 			e.printStackTrace();
 		}
     	return movieproduction;
+    }
+    
+    // 제공 OTT
+    public String provider(int movieid) {
+    	String provider = "";
+    	String uri = "https://api.themoviedb.org/3/movie/" + movieid + "/watch/providers?api_key=e9f48626c4f86f70cc4a49e2602b639c";
+    	URL url;
+    	
+		try {
+			url = new URL(uri);
+			
+	        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+	        conn.setRequestMethod("GET");
+	        
+	        BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+	        StringBuilder sb = new StringBuilder();
+	        String line;
+	        
+	        while ((line = rd.readLine()) != null) {
+	            sb.append(line);
+	        }
+	        rd.close();
+	        
+	        JSONObject json = new JSONObject(sb.toString());
+	        JSONObject kr = json.getJSONObject("results").getJSONObject("KR");
+	        JSONArray arr = kr.getJSONArray("flatrate");
+	        for (int i = 0; i < arr.length(); i++) {
+	            if (i > 0) {
+	            	provider += ",";
+	            }
+	            provider += arr.getJSONObject(i).getString("provider_name");
+	        }
+	        
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+    	return provider;
     }
     
     // TMDB에서 영화 이름을 받아 영화진흥위원회 movieCd를 찾는다
