@@ -3,7 +3,7 @@
 
 <%
 	db test = new db();
-	for(int i=2; i<3; i++){
+	for(int i=6; i<15; i++){
 		out.println(test.load(i));
 	}
 	

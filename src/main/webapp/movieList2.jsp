@@ -8,7 +8,7 @@
     db test = new db();
     int pageNum = 1; // 현재 페이지 번호
     int totalPageNum = 1; // 총 페이지 개수
-    int pageSize = 6; // 한 페이지당 출력할 항목 개수
+    int pageSize = 30; // 한 페이지당 출력할 항목 개수
     int totalCount = 0; // 총 항목 개수
     String pageParam = request.getParameter("page"); // 요청한 페이지 번호
     if (pageParam != null && !pageParam.equals("")) {
@@ -37,42 +37,49 @@
 <body>
   <div class="container">
     <table>
-      <tbody>
-        <% 
+        <tbody>
+            <% 
             int start = (pageNum - 1) * pageSize;
             int end = pageNum * pageSize;
             if (end > totalCount) {
                 end = totalCount;
             }
+            int count = 0;
             for (int i = start; i < end; i++) {
-                MovieBean bean = movieList.get(i);
-        %>
+                if (count % 6 == 0) { %>
             <tr>
+                <% } %>
                 <td>
-                    <img src="https://image.tmdb.org/t/p/w500<%=bean.getPoster() %>">
-                    <p><%=bean.getTitle() %></p>
+                    <img src="https://image.tmdb.org/t/p/w500<%=movieList.get(i).getPoster() %>">
+                    <p><%=movieList.get(i).getTitle() %></p>
                 </td>
+                <% count++; %>
+                <% if (count % 6 == 0) { %>
             </tr>
-        <% } %>
-      </tbody>
+            <% } %>
+            <% } %>
+        </tbody>
     </table>
     <% if (totalPageNum > 1) { %>
-        <ul class="pagination">
-            <% if (pageNum > 1) { %>
-                <li class="page-item">
-                    <a class="page-link" href="?page=<%=pageNum-1 %>">&laquo;</a>
-                </li>
-            <% } %>
-            <% for (int i = 1; i <= totalPageNum; i++) { %>
-                <li class="page-item <%= (i == pageNum) ? "active" : "" %>">
-                    <a class="page-link" href="?page=<%=i %>"><%=i %></a>
-                </li>
-            <% } %>
-            <% if (pageNum < totalPageNum) { %>
-                <li class="page-item">
-                    <a class="page-link" href="?page=<%=pageNum+1 %>">&raquo;</a>
-                    </ul>
-    <% } }%>
-  </div>
+	    <ul class="pagination">
+	        <% if (pageNum > 1) { %>
+	        <li class="page-item">
+	            <a class="page-link" href="?page=<%=pageNum-1 %>">&laquo;</a>
+	        </li>
+	        <% } %>
+	        <% for (int i = 1; i <= totalPageNum; i++) { %>
+	        <li class="page-item <%= (i == pageNum) ? "active" : "" %>">
+	            <a class="page-link" href="?page=<%=i %>"><%=i %></a>
+	        </li>
+	        <% } %>
+	        <% if (pageNum < totalPageNum) { %>
+	        <li class="page-item">
+	            <a class="page-link" href="?page=<%=pageNum+1 %>">&raquo;</a>
+	        </li>
+	        <% } %>
+	    </ul>
+	    <% } %>
+	</div>
+
 </body>
 </html>

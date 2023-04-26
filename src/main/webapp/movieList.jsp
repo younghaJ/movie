@@ -1,3 +1,4 @@
+<%@page import="javax.swing.text.Document"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@page import="test.db" %>
@@ -6,12 +7,33 @@
 <jsp:useBean id="mgr" class="test.MovieMgr"/>
 <%
     db test = new db();
-    ArrayList<MovieBean> movieList = new ArrayList<MovieBean>();
-
-    for (int i = 1; i <= 100; i++) {
-        ArrayList<MovieBean> tempList = mgr.getMovie(i);
-        movieList.addAll(tempList);
-    }
+	int pageNum = 1; // 현재 페이지 번호
+	int totalPageNum = 1; // 총 페이지 개수
+	int pageSize = 30; // 한 페이지당 출력할 항목 개수
+	int totalCount = 0; // 총 항목 개수
+	String pageParam = request.getParameter("page"); // 요청한 페이지 번호
+	
+	if (pageParam != null && !pageParam.equals("")) {
+	    pageNum = Integer.parseInt(pageParam);
+	}
+	
+	ArrayList<MovieBean> movieList = new ArrayList<MovieBean>();
+	int listnum = 1;
+	while (true) {
+	    ArrayList<MovieBean> tempList = mgr.getMovie(listnum);
+	    if (tempList.size() == 0) {
+	        break;
+	    }
+	    movieList.addAll(tempList);
+	    listnum++;
+	}
+	
+	totalCount = movieList.size(); // 총 항목 개수
+	if (totalCount % pageSize == 0) {
+	    totalPageNum = totalCount / pageSize;
+	} else {
+	    totalPageNum = (totalCount / pageSize) + 1;
+	}
 %>
 <!DOCTYPE html>
 <html>
@@ -38,7 +60,6 @@
             max-width: 200px;
             max-height: 100%;
         }
-        
     </style>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
 </head>
@@ -57,9 +78,12 @@
           <li><a href="#" class="nav-link px-2 link-dark">Products</a></li>
         </ul>
 
-        <form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" role="search">
-          <input type="search" class="form-control" placeholder="Search..." aria-label="Search">
-        </form>
+		<form action="/movie/MovieServlet" method="post">
+	        <div class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3 d-flex align-items-center">
+			  <input type="search" class="form-control" placeholder="Search" aria-label="Search" name="moviekeyword">
+			  <button type="button" class="btn btn-primary" style="width:80px; margin-left: 10px;">검색</button>
+			</div>
+		</form>
 
         <div class="dropdown text-end">
           <a href="#" class="d-block link-dark text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
@@ -78,23 +102,52 @@
   </header>
   <div class="container">
     <table>
-	  <tbody>
-	    <% int count = 0; %>
-	    <tr>
-	    <% for (MovieBean bean : movieList) { %>
-	      <td>
-	        <img src="https://image.tmdb.org/t/p/w500<%=bean.getPoster() %>">
-	        <p><%=bean.getTitle() %></p>
-	      </td>
-	      <% count++; %>
-	      <% if (count % 6 == 0) { %>
-	        </tr><tr>
-	      <% } %>
+        <tbody>
+            <% 
+            int start = (pageNum - 1) * pageSize;
+            int end = pageNum * pageSize;
+            if (end > totalCount) {
+                end = totalCount;
+            }
+            int count = 0;
+            for (int i = start; i < end; i++) {
+                if (count % 6 == 0) { %>
+            <tr>
+                <% } %>
+                <td>
+                    <img src="https://image.tmdb.org/t/p/w500<%=movieList.get(i).getPoster() %>">
+                    <p><%=movieList.get(i).getTitle() %></p>
+                </td>
+                <% count++; %>
+                <% if (count % 6 == 0) { %>
+            </tr>
+            <% } %>
+            <% } %>
+        </tbody>
+    </table>
+    </div>
+    <div class="container">
+    <% if (totalPageNum > 1) { %>
+	    <ul class="pagination">
+	        <% if (pageNum > 1) { %>
+	        <li class="page-item">
+	            <a class="page-link" href="?page=<%=pageNum-1 %>">&laquo;</a>
+	        </li>
+	        <% } %>
+	        <% for (int i = 1; i <= totalPageNum; i++) { %>
+	        <li class="page-item <%= (i == pageNum) ? "active" : "" %>">
+	            <a class="page-link" href="?page=<%=i %>"><%=i %></a>
+	        </li>
+	        <% } %>
+	        <% if (pageNum < totalPageNum) { %>
+	        <li class="page-item">
+	            <a class="page-link" href="?page=<%=pageNum+1 %>">&raquo;</a>
+	        </li>
+	        <% } %>
+	    </ul>
 	    <% } %>
-	    </tr>
-	  </tbody>
-	</table>
 	</div>
+	<script type="text/javascript">document.getElementById("container").style.display = "none";</script>
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
 </body>
 </html>

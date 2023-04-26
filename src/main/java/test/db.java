@@ -10,6 +10,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.SQLException;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -35,8 +36,8 @@ public class db {
 		
 		String endpoint = "https://api.themoviedb.org/3/discover/movie?"
         		+ "api_key=e9f48626c4f86f70cc4a49e2602b639c&language=ko&region=KR"
-        		+ "&sort_by=popularity.desc&include_adult=false&include_video=false&page=" + page
-        		+ "&year=2020&with_watch_monetization_types=flatrate";
+        		+ "&sort_by=popularity.desc&include_adult=true&include_video=false&page=" + page
+        		+ "&year=2018&with_watch_monetization_types=flatrate";
 		
     	try {
             
@@ -121,9 +122,16 @@ public class db {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-			pool.freeConnection(con, pstmt);
-		}
-		return endpoint;
+            try {
+                if (pstmt != null) {
+                    pstmt.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            pool.freeConnection(con);
+        }
+        return endpoint;
     }
     
     // 장르 코드 받아서 장르 문자로 반환
