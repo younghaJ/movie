@@ -40,7 +40,7 @@ public class MovieMgr {
 		return vlist;
 	}
 	
-	public ArrayList<MovieBean> getMoviel(int cpage, int pages) {
+	public ArrayList<MovieBean> getMovielist(String keyField, String keyWord, int start, int cnt) {
 		Connection con = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
@@ -48,15 +48,30 @@ public class MovieMgr {
 		ArrayList<MovieBean> vlist = new ArrayList<>();
 		try {
 			con = pool.getConnection();
-			sql = "select * from movie where movieidx >=" + cpage 
-					+ "&& movieidx <= " + cpage + pages;
-			pstmt = con.prepareStatement(sql);
+			if(keyWord.trim().equals("")||keyWord==null) {
+				sql = "select * from movie order by movieidx, movieidx limit ?, ?";
+				pstmt = con.prepareStatement(sql);
+				pstmt.setInt(1, start);
+				pstmt.setInt(2, cnt);
+				System.out.println("이거 출력");
+			}	else {
+				sql = "select * from movie where "
+						+ "? like ? order by movieidx, movieidx limit ?, ?";
+				System.out.println(keyField);
+				System.out.println(keyWord + " : " + start + " : " + cnt);
+				pstmt = con.prepareStatement(sql);
+				pstmt.setString(1, keyField);
+				pstmt.setString(2, "%" + keyWord + "%");
+				pstmt.setInt(3, start);
+				pstmt.setInt(4, cnt);
+			}
 			rs = pstmt.executeQuery();
-			if(rs.next()) {
+			while(rs.next()) {
 				MovieBean bean = new MovieBean();
 				bean.setTitle(rs.getString("title"));
 				bean.setPoster(rs.getString("poster"));
 				bean.setContent(rs.getString("content"));
+				bean.setGenre(rs.getString("genre"));
 				vlist.add(bean);
 			}
 		} catch (Exception e) {
@@ -66,6 +81,38 @@ public class MovieMgr {
 		}
 		return vlist;
 	}
+	
+	// Board Total Count : 총게시목록순
+		public int getTotalCount(String keyField, String keyWord) {
+			Connection con = null;
+			PreparedStatement pstmt = null;
+			ResultSet rs = null;
+			String sql = null;
+			int totalCount = 0;
+			try {
+				con = pool.getConnection();
+				if(keyWord.trim().equals("")||keyWord==null) {
+					sql = "select count(*) from movie";
+					pstmt = con.prepareStatement(sql);
+				}	else {
+					sql = "select count(*) from movie where "
+							+ "? like ?";
+					pstmt = con.prepareStatement(sql);
+					pstmt.setString(1, keyField);
+					pstmt.setString(2, "%" + keyWord + "%");
+					System.out.println(pstmt);
+				}
+				rs = pstmt.executeQuery();
+				if(rs.next()) {
+					totalCount = rs.getInt(1);
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			} finally {
+				pool.freeConnection(con, pstmt, rs);
+			}
+			return totalCount;
+		}
 	
 	public int countMovie() {
 		Connection con = null;

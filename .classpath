@@ -16,5 +16,6 @@
 	<classpathentry kind="lib" path="C:/Jsp/movie/src/main/webapp/WEB-INF/lib/mail.jar"/>
 	<classpathentry kind="lib" path="C:/Jsp/movie/src/main/webapp/WEB-INF/lib/mysql-connector-j-8.0.32.jar"/>
 	<classpathentry kind="lib" path="C:/Users/dita810/Downloads/json-20230227.jar"/>
+	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/json-simple-1.1.1.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

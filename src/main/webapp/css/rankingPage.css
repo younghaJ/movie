@@ -1,0 +1,66 @@
+@charset "UTF-8";
+a{
+	color: black;
+	text-decoration: none;
+}
+.moviename_a:hover{
+	text-decoration: underline;
+}
+/***top****/
+.top_css{
+	display:flex;
+	justify-content: space-between;
+}
+.state{
+	margin-top:1em;
+	margin-right: 2em;
+
+}
+/***top 끝****/
+/****예매순위 및 ott텍스트*****/
+.rankList_container{
+	background-color: rgba(217, 217, 217, 0.5);
+
+  border-radius: 25px;
+  box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
+}
+.rank_li{
+	list-style: none;
+}
+.text_div{
+	background-color: black;
+	display: flex;
+	 justify-content: center;	
+}
+.pst{
+	border-radius: 35px;
+}
+.Disney{
+	margin-top: 20px;
+}
+ .netflix{
+	margin-top: 20px;
+}
+.netf_ol {
+	margin-top: 15px;
+}
+.disney_ol{
+	margin-top: 15px;
+}
+.font_span{
+	margin-right: 20px;
+	margin-left: 20px;
+	margin-bottom :0px;
+	color: white;
+}
+.font_span:hover {
+	text-decoration: underline;
+	font-weight: bold;
+}
+
+.movie_div{
+		 display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}

@@ -10,6 +10,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import org.json.JSONArray;
@@ -29,7 +30,7 @@ public class db {
         //load();
     }
     
-    public String load(int page) {
+    public String load(int page, String year) {
     	Connection con = null;
 		PreparedStatement pstmt = null;
 		String sql = null;
@@ -37,7 +38,7 @@ public class db {
 		String endpoint = "https://api.themoviedb.org/3/discover/movie?"
         		+ "api_key=e9f48626c4f86f70cc4a49e2602b639c&language=ko&region=KR"
         		+ "&sort_by=popularity.desc&include_adult=true&include_video=false&page=" + page
-        		+ "&year=2018&with_watch_monetization_types=flatrate";
+        		+ "&year=" + year + "&with_watch_monetization_types=flatrate";
 		
     	try {
             
@@ -68,6 +69,11 @@ public class db {
                 String releaseDate = movie.getString("release_date");
                 JSONArray genre = movie.getJSONArray("genre_ids");
                 String genrecode = "";
+                if(checkTitle(title)==true) {
+                	System.out.println(title + " : 같은 제목 있음");
+                	continue;
+                }
+                	
                 for (int j = 0; j < genre.length(); j++) {
                     int genreId = genre.getInt(j);
                     
@@ -421,5 +427,29 @@ public class db {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+    
+    public boolean checkTitle(String title) {
+    	Connection con = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		String sql = null;
+		boolean check = false;
+		try {
+			con = pool.getConnection();
+			sql = "select title from movie where title = ?";
+			pstmt = con.prepareStatement(sql);
+			pstmt.setString(1, title);
+			rs = pstmt.executeQuery();
+			if(rs.next()) {
+				check = true;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			pool.freeConnection(con, pstmt, rs);
+		}
+		
+		return check;
     }
 }

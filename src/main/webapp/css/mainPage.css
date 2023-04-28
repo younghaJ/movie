@@ -1,0 +1,125 @@
+@charset "UTF-8";
+a{
+	color: black;
+	text-decoration: none;
+}
+.moviename_a:hover{
+	text-decoration: underline;
+}
+/***top****/
+.top_css{
+	display:flex;
+	justify-content: space-between;
+}
+.state{
+	margin-top:1em;
+	margin-right: 2em;
+
+}
+/***top 끝****/
+/***네비게이션 바****/
+.nav_ul{
+	display: flex;
+}
+.nav_li{
+ 	list-style: none;
+}
+/*****네비게이션 바 끝**********/
+
+/***현재 상영작 영화순위****/
+.rank_text{
+	margin-left: 10em;
+	margin-bottom: -15px;
+}
+.rank_ol{
+	margin-left: 0px; 
+	transform: translate3d(0px, 0px, 0px); 
+	display: flex;
+	justify-content: center;
+}
+.rank_li::marker{
+	font-size:22px;
+}
+dt, dd{
+	display : block;
+	color:white;
+}
+
+.divinfo{
+	 background-color: rgba(0, 0, 0, 0.5);
+	display : inline-block;
+	flex-direction: column;	 
+}
+.divinfo dt{
+	margin-left: 10px;
+	font-weight:normal;
+	font-size: 0.7rem;
+}
+.divinfo dd{
+	
+	font-weight: bold;
+}
+.info_list{
+	display : block;
+	margin-block-start: 1em;
+    margin-block-end: 1em;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+}
+.text_p{
+	background-color: green;
+}
+
+.list_li{
+	list-style: none;
+	text-align: center;
+	margin-right : 10px;
+	
+}
+/***현재 상영작 영화순위 끝****/
+
+/******핫게시글 및 영화*********/
+.today_rank{
+	height: 300px;
+}
+.ranking{
+	height : 250px;
+	
+}
+.hot_board, .hot_movie{
+	width:  580px;
+}
+.ranking_text{
+	text-align: center;
+	
+}
+/******핫게시글 및 영화 끝*********/
+
+/******영화 목록*********/
+.movie_part{
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+.movie_text{
+	display:flex;
+	justify-content: space-between;
+}
+.movielist_div{
+	 display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.prev, .next {
+  display: inline-block;
+
+}
+.prevSecondBtn, .nextSecondBtn {
+  display: inline-block;
+
+}
+.prevThirdBtn, .nextThirdBtn {
+  display: inline-block;
+
+}
+/******영화 목록 끝*********/

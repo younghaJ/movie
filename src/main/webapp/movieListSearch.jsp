@@ -66,17 +66,8 @@
 <script type="text/javascript">
 	function search() {
 		document.searchFrm.submit();
+		
 	}
-	
-	function check() {
-		if(document.searchFrm.moviekeyword.value==""){
-			alert("검색어를 입력하세요.");
-			document.searchFrm.moviekeyword.focus();
-			return;
-		}
-		document.searchFrm.submit();
-	}
-	
 </script>
 <body>
 	<header class="p-3 mb-3 border-bottom">
@@ -93,10 +84,10 @@
           <li><a href="#" class="nav-link px-2 link-dark">Products</a></li>
         </ul>
 
-		<form name="searchFrm">
+		<form action="test/Movie" method="post" name="searchFrm">
 	        <div class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3 d-flex align-items-center">
-			  <input type="search" placeholder="Search" aria-label="Search" name="moviekeyword">
-			  <button type="button" class="btn btn-primary" id="searchBtn" style="width:80px; margin-left: 10px;" onClick="javascript:check()">검색</button>
+			  <input type="search" class="form-control" placeholder="Search" aria-label="Search" name="moviekeyword">
+			  <button type="button" class="btn btn-primary" id="searchBtn" style="width:80px; margin-left: 10px;" onclick="search()">검색</button>
 			</div>
 		</form>
 		
