@@ -1,13 +1,18 @@
-<%@page import="java.util.ArrayList"%>
+<%@page import="movie.MovieBean"%>
 <%@page import="java.util.Vector"%>
+<%@page import="movie.DetailOutBean"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
-<%@ page import="movie.UtilMgr" %>
+
 <%@ page import="movie.BoardMgr" %>
 <%@ page import="movie.BoardBean" %>
-<%@ page import="movie.MovieBean" %>
+<%@ page import="movie.UtilMgr" %>
+
 <jsp:useBean id="mgr" class="movie.BoardMgr"/>
 <jsp:useBean id="mmgr" class="movie.MovieMgr"/>
+<jsp:useBean id="umgr" class="movie.UtilMgr"/>
+<jsp:useBean id="mgmgr" class="movie.MovieGradeMgr"/>
+<jsp:useBean id="dBean" class="movie.DetailOutBean" />
 <%
 String movietitle = request.getParameter("title");
 String loginedid=(String)session.getAttribute("userid");
@@ -19,7 +24,7 @@ int totalPage=0;
 int totalBlock=0;
 int nowPage=1;
 int nowBlock=1;
-char category='0';
+String category="0";
 String keyField = "", keyWord = "";
 if(request.getParameter("numPerPage")!=null){
 	numPerPage = UtilMgr.parseInt(request, "numPerPage");
@@ -28,11 +33,11 @@ if(request.getParameter("keyWord")!=null){
 	keyField = request.getParameter("keyField");
 	keyWord = request.getParameter("keyWord");
 }
+totalRecord=mgr.getBoardCount(category, keyField, keyWord);
 if(request.getParameter("reload")!=null&&
 		request.getParameter("reload").equals("true")){
 	keyField = ""; keyWord = "";
 }
-totalRecord=mgr.getBoardCount(category);
 if(request.getParameter("nowPage")!=null){
 	nowPage = UtilMgr.parseInt(request, "nowPage");
 }
@@ -42,216 +47,22 @@ int cnt = numPerPage;
 totalPage=(int)Math.ceil((double)totalRecord/numPerPage);
 totalBlock=(int)Math.ceil((double)totalPage/pagePerBlock);
 nowBlock=(int)Math.ceil((double)nowPage/pagePerBlock);
+
 %>
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
 <title>Movie Site</title>
-<script src="https://cdn.jsdelivr.net/npm/chart.js">
 
-</script>
-<style>
-body {
-	text-align: center;
-}
+    <link rel="stylesheet" type="text/css" href="css/detailStyle.css">
 
-.card {
-	display: flex;
-	display: inline-block;
-	transition: 0.3s;
-	width: 60%;
-	margin: 10px;
-}
-
-.card:hover {
-	box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
-}
-
-.title {
-	text-align: left;
-	padding: 2px 16px;
-	font-size: 24px;
-}
-
-.container {
-	text-align: left;
-	padding: 2px 16px;
-	column-count: 2;
-}
-
-.text-container {
-	display: inline-block;
-	vertical-align: top;
-}
-
-.column {
-	float: left;
-	width: 50%;
-}
-
-button {
-	background-color: #222; /* 빨간색 */
-	align: left;
-	box-shadow: none;
-}
-
-nav {
-	flex-wrap: wrap;
-	background-color: white;
-	flex-direction: column;
-	overflow: hidden;
-	align-items: center;
-	display: flex;
-	justify-content: space-between;
-	margin: 0 auto;
-	width: 60%;
-	height: 100px;
-}
-
-nav div {
-	display: flex;
-	justify-content: space-between;
-	width: 100%;
-}
-
-nav div:nth-child(2) {
-	justify-content: center;
-}
-
-nav a {
-	float: left;
-	display: block;
-	color: #666;
-	text-align: center;
-	padding: 14px 16px;
-	text-decoration: none;
-}
-
-nav a:hover {
-	background-color:;
-}
-
-nav input[type=text] {
-	padding: 6px;
-	border: none;
-	background-color: gray;
-	border-radius: 4px;
-}
-
-nav form {
-	margin-left: 20px;
-}
-
-nav img {
-	margin-left: 20px;
-	margin-right: 40%;
-}
-
-nav span {
-	margin-right: 20px;
-	margin-left: 40%;
-}
-
-.tab-navigation {
-	background-color: #f2f2f2;
-	border-top: 1px solid #ccc;
-	display: flex;
-	justify-content: center;
-	margin-top: 20px;
-}
-
-.tab-navigation ul {
-	display: flex;
-	list-style: none;
-	margin: 0;
-	padding: 0;
-}
-
-.tab-navigation a {
-	color: #666;
-	display: block;
-	font-size: 18px;
-	padding: 10px 20px;
-	text-decoration: none;
-}
-
-.tab-navigation a:hover {
-	background-color: #ddd;
-	color: #000;
-}
-
-.tab {
-	display: none;
-}
-
-div[data-tab="tab1"] {
-	white-space: pre-wrap;
-}
-
-.tab.active {
-	display: block;
-	justify-content: center;
-}
-
-#image-list {
-	display: flex;
-}
-
-#image-list img {
-	top: 0;
-	left: 0;
-	width: 10%;
-	height: 10%;
-	object-fit: cover;
-}
-
-#image-container {
-	width: 50%;
-	height: 50%;
-	object-fit: cover;
-	display: flex;
-	justify-content: center;
-}
-canvas {
-  width: 200px !important;
-  height: 200px !important;
-}
-
-.video-container {
-  text-align: center;
-}
-
-@media ( prefers-color-scheme : dark) {
-	body {
-		background-color: #222;
-		color: white;
-	}
-	nav {
-		background-color: #222;
-	}
-	nav a {
-		color: white;
-	}
-	nav input[type=text] {
-		background-color: #333;
-		color: white;
-	}
-	.tab-navigation {
-		border-top: #222;
-		background-color: #222;
-	}
-	.tab-navigation a {
-		color: white;
-	}
-}
-</style>
 </head>
 <body>
 	<nav>
 		<div>
-			<img src="img/logo.png" alt="Logo" style="width: 75px; height: 25px;">
-			<span>(12)</span>
+			<img src="img/logo1.png" alt="Logo" style="width: 75px; height: 25px;">
+			<span></span>
 		</div>
 		<div>
 			<form>
@@ -265,6 +76,7 @@ canvas {
 	</nav>
 <%
 	MovieBean moviebean = mmgr.searchMovie(movietitle);
+	int movieidx = moviebean.getMovieidx();
 	String title = moviebean.getTitle();
 	String poster = moviebean.getPoster();
 	String content = moviebean.getContent();
@@ -278,9 +90,9 @@ canvas {
 	
 	String[] trailerArr = trailer.split(",");
 %>	
-	
 	<div class="card">
-		<img src="https://image.tmdb.org/t/p/w500<%=poster %>"
+		<img
+			src="https://image.tmdb.org/t/p/w500<%=poster %>"
 			alt="<%=title %>" style="width: 20%">
 		<div class="text-container">
 			<div class="title">
@@ -313,23 +125,22 @@ canvas {
 				</table>
 			</div>
 		</div>
-		<button>
-			<img src="img/good.png" alt="Button Image" align="left">
+		<button  id="g-button">
+			<img id="g-image" src="img/Egood.png" alt="Button Image" width="50px" height="50px">
 		</button>
-		<button>
-			<img src="img/bad.png" alt="Button Image" align="left">
+		<button  id="b-button">
+			<img id="b-image" src="img/Ebad.png" alt="bad"  width="50px" height="50px">
 		</button>
-		<button>
-			<img src="img/heart.png" alt="Button Image">
+		<button id="h-button">
+			<img id="h-image" src="img/empty.png" alt="heart" width="50px" height="50px">
 		</button>
 	</div>
 	<div class="tab-navigation">
 		<ul>
-		<li><a href="#synopsis" class="tab-link" data-tab="tab1">개요</a></li>
+			<li><a href="#synopsis" class="tab-link" data-tab="tab1">개요</a></li>
 			<li><a href="#cast" class="tab-link" data-tab="tab2">출연진</a></li>
 			<li><a href="#preview" class="tab-link" data-tab="tab3">예고편</a></li>
-			<li><a href="#preview" class="tab-link" data-tab="tab4">통계</a></li>
-			<li><a href="#reviews" class="tab-link" data-tab="tab5">리뷰</a></li>
+			<li><a href="#reviews" class="tab-link" data-tab="tab4">리뷰</a></li>
 		</ul>
 	</div>
 
@@ -339,7 +150,6 @@ canvas {
 			<%=content %>
 		</div>
 		<div class="tab" data-tab="tab2">
-			<!-- cast content code -->
 			<%=actor %>
 			<p><%=trailer %></p>
 		</div>
@@ -361,15 +171,13 @@ canvas {
 			  </div>
 			</div>
 		</div>
-		<div class="tab" data-tab="tab4">
-			<canvas id="myChart"></canvas>
-		</div>
-		<div class="tab" data-tab="tab5">
-			<table>
+			
+			<div class="tab" data-tab="tab4">
+						<table>
 	<tr> 
 		<td align="center" colspan="2">
 		<%
-				Vector<BoardBean> vlist =mgr.getBoardList(category);
+				Vector<BoardBean> vlist =mgr.getBoardList(category, keyField, keyWord);
 				int listSize = vlist.size();
 				if(vlist.isEmpty()){
 					out.println(totalRecord+" 등록된 게시물이 없습니다.");
@@ -419,7 +227,8 @@ canvas {
 			</table>
 		<%}//--if-else%>	
 			</table>
-		</div>
+				
+			</div>
 		</div>
 
 		<script>
@@ -444,7 +253,6 @@ canvas {
 			    } );
 			  };
 			})();
-		
   const tabLinks = document.querySelectorAll('.tab-navigation a');
   const tabContents = document.querySelectorAll('.tab');
   
@@ -471,49 +279,53 @@ canvas {
 	    tabLink.addEventListener('click', setActiveTab);
 	  }
 	  
-	  const imageContainer = document.querySelector('#image-container');
-	  const imageList = document.querySelector('#image-list');
+	    const button1 = document.getElementById('h-button');
+	    const image1 = document.getElementById('h-image');
 
-	  imageList.addEventListener('click', (event) => {
-	    if (event.target.tagName === 'IMG') {
-	      const newImageSrc = event.target.src;
-	      const imageContainerImg = imageContainer.querySelector('img');
-	      imageContainerImg.src = newImageSrc;
-	    }
-	  });
-	  
-	  //원형차트 만들기
-	  var ctx = document.getElementById('myChart').getContext('2d');
-	    var myChart = new Chart(ctx, {
-	        type: 'pie', // 차트 종류 (원형 차트)
-	        data: {
-	            labels: ['Red', 'Blue', 'Yellow'], // 라벨
-	            datasets: [{
-	                label: '# of Votes',
-	                data: [12, 19, 3], // 데이터
-	                backgroundColor: [
-	                    'rgba(255, 99, 132, 0.2)', // 색상
-	                    'rgba(54, 162, 235, 0.2)',
-	                    'rgba(255, 206, 86, 0.2)'
-	                ],
-	                borderColor: [
-	                    'rgba(255, 99, 132, 1)', // 선 색상
-	                    'rgba(54, 162, 235, 1)',
-	                    'rgba(255, 206, 86, 1)'
-	                ],
-	                borderWidth: 1 // 선 굵기
-	            }]
-	        },
-	        options: {
-	        	responsive: true,
-	            scales: {
-	                y: {
-	                    beginAtZero: true // Y축 값이 0부터 시작    		 
-	                }
-	            }
-	        }
+	    button1.addEventListener('click', () => {
+	    	if (image1.src.endsWith('empty.png')) {
+	    	    image1.src = 'img/full.png';
+	    	  } else if (image1.src.endsWith('full.png')) {
+	    	    image1.src = 'img/empty.png';
+	    	}
+	    	
 	    });
-	    myChart.update();		
+	    
+	    const button2 = document.getElementById('b-button');
+	    const image2 = document.getElementById('b-image');
+
+	    button2.addEventListener('click', () => {
+	      if (image2.src.endsWith('Ebad.png')) {
+	        image2.src = 'img/Fbad.png';
+	      } else if (image2.src.endsWith('Fbad.png')) {
+	        image2.src = 'img/Ebad.png';
+	      }
+	      if (image3.src.endsWith('Fgood.png') && image2.src.endsWith('Fbad.png')) {
+	    	    alert("이미 좋아요를 누른 상태입니다.");
+	    	    image2.src = 'img/Ebad.png';
+	    	  }
+	    });
+
+	    const button3 = document.getElementById('g-button');
+	    const image3 = document.getElementById('g-image');
+
+	    button3.addEventListener('click', () => {
+	      if (image3.src.endsWith('Egood.png')) {
+	        image3.src = 'img/Fgood.png';
+	      } else if (image3.src.endsWith('Fgood.png')) {
+	        image3.src = 'img/Egood.png';
+	      }
+	      
+	      if (image3.src.endsWith('Fgood.png') && image2.src.endsWith('Fbad.png')) {
+	    	    alert("이미 싫어요를 누른 상태입니다.");
+	    	    image3.src = 'img/Egood.png';
+	    	  }
+	    });
+	    
+	    
+	 
+	   
+	    
 </script>
 </body>
 </html>

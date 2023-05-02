@@ -1,56 +1,11 @@
-<%@page import="java.util.ArrayList"%>
-<%@page import="java.util.Vector"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
-<%@ page import="movie.UtilMgr" %>
-<%@ page import="movie.BoardMgr" %>
-<%@ page import="movie.BoardBean" %>
-<%@ page import="movie.MovieBean" %>
-<jsp:useBean id="mgr" class="movie.BoardMgr"/>
-<jsp:useBean id="mmgr" class="movie.MovieMgr"/>
-<%
-String movietitle = request.getParameter("title");
-String loginedid=(String)session.getAttribute("userid");
-//MovieMemberBean loginedBean=MovieMemberMgr.getMovieMember(loginedid);
-int totalRecord=0;
-int numPerPage=10;
-int pagePerBlock=15;
-int totalPage=0;
-int totalBlock=0;
-int nowPage=1;
-int nowBlock=1;
-char category='0';
-String keyField = "", keyWord = "";
-if(request.getParameter("numPerPage")!=null){
-	numPerPage = UtilMgr.parseInt(request, "numPerPage");
-}
-if(request.getParameter("keyWord")!=null){
-	keyField = request.getParameter("keyField");
-	keyWord = request.getParameter("keyWord");
-}
-if(request.getParameter("reload")!=null&&
-		request.getParameter("reload").equals("true")){
-	keyField = ""; keyWord = "";
-}
-totalRecord=mgr.getBoardCount(category);
-if(request.getParameter("nowPage")!=null){
-	nowPage = UtilMgr.parseInt(request, "nowPage");
-}
-int start = (nowPage*numPerPage)-numPerPage;
-int cnt = numPerPage;
-
-totalPage=(int)Math.ceil((double)totalRecord/numPerPage);
-totalBlock=(int)Math.ceil((double)totalPage/pagePerBlock);
-nowBlock=(int)Math.ceil((double)nowPage/pagePerBlock);
-%>
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
 <title>Movie Site</title>
-<script src="https://cdn.jsdelivr.net/npm/chart.js">
-
-</script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
 body {
 	text-align: center;
@@ -191,7 +146,6 @@ div[data-tab="tab1"] {
 
 .tab.active {
 	display: block;
-	justify-content: center;
 }
 
 #image-list {
@@ -216,10 +170,6 @@ div[data-tab="tab1"] {
 canvas {
   width: 200px !important;
   height: 200px !important;
-}
-
-.video-container {
-  text-align: center;
 }
 
 @media ( prefers-color-scheme : dark) {
@@ -263,52 +213,41 @@ canvas {
 			</div>
 		</div>
 	</nav>
-<%
-	MovieBean moviebean = mmgr.searchMovie(movietitle);
-	String title = moviebean.getTitle();
-	String poster = moviebean.getPoster();
-	String content = moviebean.getContent();
-	String genre = moviebean.getGenre();
-	String opendt = moviebean.getOpendt();
-	String age = moviebean.getAge();
-	String actor = moviebean.getActor();
-	String director = moviebean.getDirector();
-	String playtime = moviebean.getPlaytime();
-	String trailer = moviebean.getTrailer();
-	
-	String[] trailerArr = trailer.split(",");
-%>	
-	
 	<div class="card">
-		<img src="https://image.tmdb.org/t/p/w500<%=poster %>"
-			alt="<%=title %>" style="width: 20%">
+		<img
+			src="https://cdn.newsculture.press/news/photo/202303/519887_640005_2853.jpg"
+			alt="스즈메의 문단속" style="width: 20%">
 		<div class="text-container">
 			<div class="title">
 				<h4>
-					<b><%=movietitle %></b>
+					<b>스즈메의 문단속 </b>
 				</h4>
 			</div>
 			<div class="container">
 				<table>
 					<tr>
 						<td>개봉</td>
-						<td><%=opendt %></td>
+						<td>2023.03.08</td>
 					</tr>
 					<tr>
 						<td>장르</td>
-						<td><%=genre %></td>
+						<td>애니메이션/어드벤처/판타지</td>
 					</tr>
 					<tr>
-						<td>청소년 관람불가 여부</td>
-						<td><%=age %></td>
+						<td>국가</td>
+						<td>일본</td>
+					</tr>
+					<tr>
+						<td>등급</td>
+						<td>12세이상관람가</td>
 					</tr>
 					<tr>
 						<td>런타임</td>
-						<td><%=playtime %></td>
+						<td>122분</td>
 					</tr>
 					<tr>
 						<td>감독</td>
-						<td><%=director %></td>
+						<td>신카이 마코토</td>
 					</tr>
 				</table>
 			</div>
@@ -336,115 +275,52 @@ canvas {
 	<div id="tab-content">
 		<div class="tab active" data-tab="tab1">
 			<!-- synopsis content code -->
-			<%=content %>
+			“이 근처에 폐허 없니? 문을 찾고 있어” 규슈의 한적한 마을에 살고 있는 소녀 ‘스즈메’는 문을 찾아 여행 중인 청년
+			‘소타’를 만난다. 그의 뒤를 쫓아 산속 폐허에서 발견한 낡은 문. ‘스즈메’가 무언가에 이끌리듯 문을 열자 마을에 재난의
+			위기가 닥쳐오고 가문 대대로 문 너머의 재난을 봉인하는 ‘소타’를 도와 간신히 문을 닫는다. “닫아야만 하잖아요, 여기를!”
+			재난을 막았다는 안도감도 잠시, 수수께끼의 고양이 ‘다이진’이 나타나 ‘소타’를 의자로 바꿔 버리고 일본 각지의 폐허에
+			재난을 부르는 문이 열리기 시작하자 ‘스즈메’는 의자가 된 ‘소타’와 함께 재난을 막기 위한 여정에 나선다. “꿈이
+			아니었어” 규슈, 시코쿠, 고베, 도쿄 재난을 막기 위해 일본 전역을 돌며 필사적으로 문을 닫아가던 중 어릴 적 고향에 닿은
+			‘스즈메’는 잊고 있던 진실과 마주하게 되는데…
 		</div>
 		<div class="tab" data-tab="tab2">
 			<!-- cast content code -->
-			<%=actor %>
-			<p><%=trailer %></p>
+			하라 나노카 Nanoka Hara 이와토 스즈메 (일본어 목소리) 역 마츠무라 호쿠토 Matsumura Hokuto 무나카타
+			소타 (일본어 목소리) 역
 		</div>
 		<div class="tab" data-tab="tab3" style="padding-top: 40px">
-			<div class="video-container">
-			<%
-				if(trailerArr.length == 0){
-			%>
-				<q>등록된 트레일러 영상이 없습니다</q>
-			<%
-				} else {
-				for(int i = 0; i<trailerArr.length; i++) {
-			%>
-			  <div class="youtube-player" data-id="<%=trailerArr[i] %>"></div>
-			<% }} %>
-			  <div class="slider-buttons">
-			    <button class="prev-button">이전</button>
-			    <button class="next-button">다음</button>
-			  </div>
+			<iframe width="750" height="422"
+				src="https://tv.kakao.com/embed/player/cliplink/430418376?service=kakao_tv"
+				frameborder="0" allowfullscreen></iframe>
+			<div id="image-container">
+				<img
+					src="https://img.vogue.co.kr/vogue/2023/03/style_64084cffe607b-930x523.jpg"
+					alt="Image 1">
 			</div>
+			<ul id="image-list">
+				<li><img
+					src="https://img.vogue.co.kr/vogue/2023/03/style_64084cffe607b-930x523.jpg"
+					alt="Image 1"></li>
+				<li><img
+					src="https://img.vogue.co.kr/vogue/2023/03/style_64084d02411bc-930x523.jpg"
+					alt="Image 2"></li>
+				<li><img
+					src="https://img.vogue.co.kr/vogue/2023/03/style_64084d6f51ce7-930x523.jpg"
+					alt="Image 3"></li>
+			</ul>
 		</div>
 		<div class="tab" data-tab="tab4">
 			<canvas id="myChart"></canvas>
 		</div>
 		<div class="tab" data-tab="tab5">
-			<table>
-	<tr> 
-		<td align="center" colspan="2">
-		<%
-				Vector<BoardBean> vlist =mgr.getBoardList(category);
-				int listSize = vlist.size();
-				if(vlist.isEmpty()){
-					out.println(totalRecord+" 등록된 게시물이 없습니다.");
-				}else{
-		%>
-			<table cellspacing="0">
-				<tr align="center" bgcolor="#D0D0D0">
-					<td width="100">번 호</td>
-					<td width="250">제 목</td>
-					<td width="100">작성자</td>
-					<td width="150">작성일</td>
-					<td width="100">좋아요</td>
-				</tr>	
-				<%
-					for(int i=0;i<numPerPage/*10*/;i++){
-						if(i==listSize) break;
-						BoardBean bean = vlist.get(i);
-						int num = bean.getBoardIdx();
-						String subject = bean.getTitle();
-						//String name=MovieMemberMgr.getMovieMember(bean.getUserId());
-						String name = "dummy";
-						String regdate = bean.getPostedDate().toString();
-						//int depth = bean.getDepth();
-						//int count = bean.getCount();
-						//String filename = bean.getFilename();
-						int ccount=mgr.getCommentCount(num);
-						int lcount=bean.getLiked();
-				%>
-				<tr align="center">
-					<td><%=totalRecord-start-i%></td>
-					<td align="left">
-					<%//for(int j=0;j<depth;j++){out.println("&nbsp;&nbsp;");} %>
-					<a href="javascript:read('<%=num%>')">
-					<%=subject%></a>
-					<!-- <%//if(filename!=null&&!filename.equals("")){ %>
-						<img alt="첨부파일" src="img/icon.gif" align="middle">	
-					<%//}%> -->
-					<%if(ccount>0){ %>
-					<font color="black">[<%=ccount %>]</font>
-					<%} %>
-					</td>
-					<td><%=name%></td>
-					<td><%=regdate%></td>
-					<td><%=lcount%></td>
-				</tr>
-				<%}//--for	%>
-			</table>
-		<%}//--if-else%>	
-			</table>
+			<h1>리뷰</h1>
+			<ul id="bulletin-board">
+			</ul>
+			대충 리뷰
 		</div>
 		</div>
 
 		<script>
-		(function() {
-			  var youtube = document.querySelectorAll(".youtube-player");
-			  for (var i = 0; i < youtube.length; i++) {
-			    var source = "https://img.youtube.com/vi/"+ youtube[i].dataset.id +"/sddefault.jpg";
-			    var image = new Image();
-			    image.src = source;
-			    image.addEventListener( "load", function() {
-			      youtube[ i ].appendChild( image );
-			    }( i ) );
-			    youtube[i].addEventListener( "click", function() {
-			      var iframe = document.createElement( "iframe" );
-			      iframe.setAttribute( "frameborder", "0" );
-			      iframe.setAttribute( "allowfullscreen", "" );
-			      iframe.setAttribute( "width", "1000" ); // width 속성 추가
-			      iframe.setAttribute( "height", "800" ); // height 속성 추가
-			      iframe.setAttribute( "src", "https://www.youtube.com/embed/"+ this.dataset.id +"?rel=0&showinfo=0&autoplay=1" );
-			      this.innerHTML = "";
-			      this.appendChild( iframe );
-			    } );
-			  };
-			})();
-		
   const tabLinks = document.querySelectorAll('.tab-navigation a');
   const tabContents = document.querySelectorAll('.tab');
   

@@ -1,13 +1,14 @@
+<%@page import="java.util.ArrayList"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
-<%@page import="test.db" %>
-<%@page import="test.MovieBean"%>
+<%@page import="movie.db" %>
+<%@page import="movie.MovieBean"%>
 <%@page import="java.util.Vector"%>
-<jsp:useBean id = "mgr" class = "test.MovieMgr"/>
+<jsp:useBean id = "r m" class = "w movie.MovieM"/>
 <%
 	db test = new db();
 	MovieBean bean = new MovieBean();
-	Vector<MovieBean> vlist = mgr.getMovie(1);
+	ArrayList<MovieBean> vlist = mgr.getMovie(1);
 	bean = vlist.get(0);
 	String title = bean.getTitle();
 	String image = bean.getPoster();

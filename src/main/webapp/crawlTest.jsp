@@ -1,8 +1,8 @@
 <%@page import="org.json.simple.parser.JSONParser"%>
 <%@page import="org.json.JSONArray"%>
 <%@page import="org.json.JSONObject"%>
-<%@page import="test.MovieBean"%>
-<%@page import="test.RankMgr"%>
+<%@page import="movie.MovieBean"%>
+<%@page import="movie.RankMgr"%>
 <%@page import="java.util.ArrayList"%>
 <%@page import="java.util.List"%>
 <%@page import="java.text.SimpleDateFormat"%>

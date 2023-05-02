@@ -1,10 +1,10 @@
 <%@page import="javax.swing.text.Document"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-<%@page import="test.db" %>
-<%@page import="test.MovieBean"%>
+<%@page import="movie.db" %>
+<%@page import="movie.MovieBean"%>
 <%@page import="java.util.ArrayList"%>
-<jsp:useBean id="mgr" class="test.MovieMgr"/>
+<jsp:useBean id="mgr" class="movie.MovieMgr"/>
 <%
     db test = new db();
 	int pageNum = 1; // 현재 페이지 번호

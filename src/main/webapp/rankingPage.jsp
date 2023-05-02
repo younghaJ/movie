@@ -1,5 +1,5 @@
-<%@page import="test.MovieBean"%>
-<%@page import="test.RankMgr"%>
+<%@page import="movie.MovieBean"%>
+<%@page import="movie.RankMgr"%>
 <%@page import="java.util.List"%>
 <%@page import="java.util.ArrayList"%>
 
